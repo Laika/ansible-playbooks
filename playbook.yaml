@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  vars:
+    goenv:
+      versions:
+        - 1.18.0
+        - 1.17.8
+    pyenv:
+      versions:
+        - 3.10.4
+        - 3.9.12
+        - 2.7.18
+  roles:
+    - goenv
+    - pyenv

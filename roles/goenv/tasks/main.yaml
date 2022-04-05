@@ -1,0 +1,29 @@
+---
+- name: Download goenv
+  ansible.builtin.git:
+    repo: https://github.com/syndbg/goenv
+    dest: "{{ ansible_env.HOME }}/.goenv"
+    update: yes
+
+- name: Set environment variables to .bashrc
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    block: |
+      export GOENV_ROOT="${HOME}/.goenv"
+      export PATH="${GOENV_ROOT}/bin:${PATH}"
+      eval "$(goenv init -)"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK [goenv]"
+
+- name: Install Go via goenv
+  ansible.builtin.shell:
+    cmd: ". {{ ansible_env.HOME }}/.bashrc && goenv install {{ item }}"
+    executable: /bin/bash
+  loop: "{{ goenv.versions }}"
+  loop_control:
+    label: "Go {{ item }}"
+  ignore_errors: yes
+
+- name: Set global Go version
+  ansible.builtin.shell:
+    cmd: ". {{ ansible_env.HOME }}/.bashrc && goenv global {{ goenv.versions | join(' ') }}"
+    executable: /bin/bash

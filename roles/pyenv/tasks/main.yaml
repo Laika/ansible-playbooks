@@ -1,0 +1,52 @@
+---
+- name: Install prerequisites
+  become: yes
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg:
+      - build-essential 
+      - curl
+      - libbz2-dev
+      - libffi-dev
+      - liblzma-dev
+      - libncursesw5-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - libssl-dev
+      - libxml2-dev
+      - libxmlsec1-dev
+      - llvm
+      - make 
+      - tk-dev
+      - wget
+      - xz-utils
+      - zlib1g-dev
+
+- name: Download pyenv
+  ansible.builtin.git:
+    repo: https://github.com/pyenv/pyenv
+    dest: "{{ ansible_env.HOME }}/.pyenv"
+    update: yes
+
+- name: Set environment variables to .bashrc
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    block: |
+      export PYENV_ROOT="${HOME}/.pyenv"
+      export PATH="${PYENV_ROOT}/bin:${PATH}"
+      eval "$(pyenv init --path)"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK [pyenv]"
+
+- name: Install Python via pyenv
+  ansible.builtin.shell:
+    cmd: ". {{ ansible_env.HOME }}/.bashrc && pyenv install {{ item }}"
+    executable: /bin/bash
+  loop: "{{ pyenv.versions }}"
+  loop_control:
+    label: "Python {{ item }}"
+  ignore_errors: yes
+
+- name: Set global Python version
+  ansible.builtin.shell:
+    cmd: ". {{ ansible_env.HOME }}/.bashrc && pyenv global {{ pyenv.versions | join(' ') }}"
+    executable: /bin/bash
