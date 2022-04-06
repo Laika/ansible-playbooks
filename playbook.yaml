@@ -1,6 +1,8 @@
 ---
 - hosts: localhost
   vars:
+    docker_compose:
+      version: 2.4.1
     goenv:
       versions:
         - 1.18.0
@@ -11,5 +13,7 @@
         - 3.9.12
         - 2.7.18
   roles:
-    - goenv
-    - pyenv
+    - docker 
+      #- docker-compose
+      #- goenv
+      #- pyenv

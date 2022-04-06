@@ -1,0 +1,20 @@
+---
+- name: Get kernel and machine name
+  ansible.builtin.shell:
+    cmd: >
+      uname -s &&
+      uname -m
+  register: km_info
+
+
+- name: Create directories
+  become: yes
+  ansible.builtin.file:
+    path: /usr/local/lib/docker/cli-plugins
+
+- name: Download Docker compose
+  become: yes
+  ansible.builtin.get_url:
+    url: "https://github.com/docker/compose/releases/download/v{{ docker_compose.version }}/docker-compose-{{ km_info.stdout_lines[0] }}-{{ km_info.stdout_lines[1] }}"
+    dest: /usr/local/lib/docker/cli-plugins/docker-compose
+    mode: '0755'

@@ -5,7 +5,7 @@ help:
 
 .PHONY: install
 install:
-	ANSIBLE_NOCOWS=1 ansible-playbook -i hosts.ini --ask-become-pass playbook.yaml
+	ANSIBLE_NOCOWS=1 ansible-playbook -v -i hosts.ini --ask-become-pass playbook.yaml
 
 .PHONY: ansible
 ansible:

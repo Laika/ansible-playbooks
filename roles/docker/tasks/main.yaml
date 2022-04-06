@@ -1,0 +1,17 @@
+---
+- name: Install prerequisites
+  become: yes
+  ansible.builtin.apt:
+    update_cache: yes
+    pkg:
+      - curl
+
+- name: Run installation script
+  ansible.builtin.shell:
+    cmd: curl -sSL https://get.docker.com | sh
+
+- name: Add an user to a docker group
+  become: yes
+  ansible.builtin.user:
+    name: "{{ lookup('env', 'USER') }}"
+    group: docker
