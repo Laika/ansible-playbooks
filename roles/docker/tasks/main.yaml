@@ -14,4 +14,5 @@
   become: yes
   ansible.builtin.user:
     name: "{{ lookup('env', 'USER') }}"
-    group: docker
+    groups: docker
+    append: yes
